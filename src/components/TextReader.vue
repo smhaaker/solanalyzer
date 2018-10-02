@@ -91,7 +91,7 @@ export default {
       // console.log('found contract: ' + a)
       this.findContractName()
       this.findFunctions()
-      this.findElements(vm.text, 'function', '{')
+      this.findElements(vm.text, 'function ', '{')
     },
     findContractName () {
       let vm = this
@@ -107,7 +107,7 @@ export default {
     },
     findFunctions () {
       let vm = this
-      let preString = 'function'
+      let preString = 'function '
       let searchString = '{'
       let preIndex = vm.text.indexOf(preString)
       let postIndex = vm.text.indexOf(searchString)
