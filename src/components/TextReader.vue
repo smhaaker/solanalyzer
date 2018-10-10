@@ -13,9 +13,20 @@
     </li>
   </ul>
   <button class="button" @click="analyze">analyze</button>
-  <p>Contract Name: {{contractName}}</p>
-  <p>Functions: {{functions}}</p>
+    <div v-for="li in list" :key="li.index">
+      Contract Name: {{li.content}}
+    </div>
+  <!-- <p>Contract Name: {{contractName}}</p> -->
+  <h1 v-show="functionsLoaded">Functions:</h1>
+  <div v-if="functionList > 0">test</div>
+    <div v-for="funct in functionList" :key="funct.index">
+      {{funct.content}}
+    </div>
+    <p></p>
   <p>{{text}}</p>
+
+
+  <!-- <p>{{list}}</p> -->
   </div>
 </template>
 
@@ -26,9 +37,12 @@ export default {
       fileNames: null,
       files: null,
       text: 'null',
-      contractName: 'ContractName: ',
+      contractName: null,
       contractArray: null,
-      functions: ''
+      functionList: [],
+      functionsLoaded: null,
+      list: [], 
+      ok: null
     }
   },
   methods: {
@@ -48,9 +62,6 @@ export default {
           // console.log(reader.result);
           vm.text = reader.result
           console.log('text result: ' + this.text)
-          // for(let i = 0; i <= reader.result.length; i++){
-          //   console.log(i)
-          // }
           let n = reader.result.search('contract')
           console.log('contract name found at: ' + n)
           vm.contractName = reader.result.slice(n, n + 20)
@@ -71,27 +82,10 @@ export default {
     analyze () {
       console.log('analyze this!')
       let vm = this
-      // console.log(vm.text)
-      // let n = vm.text.search('{')
-      // console.log(n)
-      // const splitText = vm.text.split(" ");
-      // console.log(splitText)
-      // const dict = vm.text.split(" ");
-
-      // const trimmed = vm.text.trim();
-      // console.log('trimmed:'  + trimmed)
-      // vm.contractArray = trimmed.split(" ");
-      // console.log(vm.contractArray);
-
-      // vm.contractArray = vm.text.split(" ");
-      // console.log(vm.contractArray);
-      // var a = vm.contractArray.indexOf("function");
-      // var fruits = ["Banana", "Orange", "Apple", "Mango"];
-      // var a = fruits.indexOf("Apple");
-      // console.log('found contract: ' + a)
-      this.findContractName()
-      this.findFunctions()
-      this.findElements(vm.text, 'function ', '{')
+    //  this.findContractName()
+    //  this.findFunctions()
+      this.findElements(vm.text, 'function ', '{', vm.functionList)
+      this.findElements(vm.text, 'contract ', '{', vm.list) // check this one
     },
     findContractName () {
       let vm = this
@@ -116,23 +110,15 @@ export default {
       console.log(postIndex)
       console.log(searchIndex)
       let result = []
-      vm.functions = vm.text.slice(preIndex + 9, searchIndex)
+      vm.functionList = vm.text.slice(preIndex + 9, searchIndex)
       console.log('function? ' + vm.text.slice(preIndex + 9, searchIndex))
       console.log(result)
     },
-    findElements (source, find, endChar) {
+    findElements (source, find, endChar, listNew) {
       let vm = this
-      // let result = []
-      // for(let i = 0; i <= vm.text.length; ++i){
-      //   if(vm.text.substring(i, i+find.length) == find){}
-      //   result.push(i)
-      //   console.log(i)
-      // }
-      // console.log(result)
       let startString = []
-      // let endString = []
-      // let result = []
-      let totalIndex;
+      let result = []
+      let totalIndex
       for (let i = 0; i < source.length; ++i) {
         // If you want to search case insensitive use
         // if (source.substring(i, i + find.length).toLowerCase() == find) {
@@ -140,14 +126,31 @@ export default {
           startString.push(i)
         }
       }
-      
+      if(source.length > 0){
+        this.functionsLoaded = true;
+      }
       console.log(startString)
       // console.log(vm.text.slice(startString[0] + 9, startString[0] + 20)) // just a test
-      for (let i = 0; i <= startString.length; i++) {
-        console.log(vm.text.slice(startString[i] + 9, startString[i] + 40))
-        // need to loop over startStrings here and find end of string as well. 
+      for (let i = 0; i < startString.length; i++) {
+        let searchIndex = startString[i] + vm.text.substring(startString[i]).indexOf(endChar)
+       // console.log('Search Indexes ' + searchIndex)
+        console.log(vm.text.slice(startString[i] + 9, searchIndex))
+        // result.push(vm.text.slice(startString[i] + 9, searchIndex))
+        let funct = vm.text.slice(startString[i] + 9, searchIndex)
+        result.push(funct)
+      // console.log(vm.text.slice(startString[i] + 9, startString[i] + 40))
+        // need to loop over startStrings here and find end of string as well.
       }
-      return startString
+      console.log('result: ' + result)
+      // vm.result = vm.result.concat(result)
+      // this.result.push(...result)
+      for( let i = 0; i < result.length; i++){
+        console.log('arrayLoop: index: ' + i + ' is: ' + result[i])
+        listNew.push({id: i, content: result[i]})
+        // this.list.push({id: i})
+      }
+      console.log(listNew)
+      // return startString
     }
   }
 }
