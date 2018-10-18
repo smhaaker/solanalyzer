@@ -36,11 +36,13 @@
       {{funct.content}}
     </div>
     <p></p> -->
-  <p>{{text}}</p>
+  <p>text {{text}}</p>
     <div v-for="tx in text" :key="tx.index">
       {{tx.index}}
     </div>
     <p>{{files}}</p>
+    <p>Testlist: {{testList}}</p>
+
   </div>
 </template>
 
@@ -49,31 +51,37 @@ export default {
   data () {
     return {
       files: null,
-      text: null,
+      text: [],
       contractName: null,
       contractArray: null,
       functionList: [],
       functionsLoaded: null,
       filesLoaded: null,
       contractNameList: [],
-      ok: null
+      ok: null,
+      testList: []
     }
   },
   methods: {
     loadTextFromFile (ev) {
       var vm = this
       vm.filesLoaded = true
+      let resultArray = []
       // File list Output
       // console.log(ev.target.files)
+      // push({id: i, content: result[i]})
+      // vm.files.push({id: i, content:ev.target.files})
       vm.files = ev.target.files
       for (let i = 0; i < ev.target.files.length; i++) {
         var reader = new FileReader()
         reader.onload = function (e) {
           vm.text = reader.result
+          // resultArray.push(reader.result)
           // console.log('text output: ' + vm.text)
-          let n = reader.result.search('contract')
-          vm.contractName = reader.result.slice(n, n + 20)
+          // let n = reader.result.search('contract')
+          // vm.contractName = reader.result.slice(n, n + 20)
           // console.log(vm.contractName)
+          // console.log(resultArray)
         }
         console.log('count: ' + i)
         const file = ev.target.files[i] // sets to first uploaded file
@@ -87,6 +95,9 @@ export default {
       // We need to loop over multiple files here.
       this.findElements(vm.text, 'function ', '{', vm.functionList)
       this.findElements(vm.text, 'contract ', '{', vm.contractNameList)
+      // To write into object
+      // this.findElements(vm.text, 'function ', '{', vm.testList.function)
+      // this.findElements(vm.text, 'contract ', '{', vm.contractNameList)
     },
     findElements (source, find, endChar, listNew) {
       let vm = this
@@ -116,7 +127,7 @@ export default {
       }
       // Loop over result array to push to data object
       for (let i = 0; i < result.length; i++) {
-        // console.log('arrayLoop: index: ' + i + ' is: ' + result[i])
+        console.log('arrayLoop: index: ' + i + ' is: ' + result[i])
         listNew.splice(i) // Clear old array
         listNew.push({id: i, content: result[i]})
       }
