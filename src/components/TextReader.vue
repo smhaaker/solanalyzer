@@ -13,16 +13,20 @@
     </li>
   </ul>
   <button class="button" @click="analyze">analyze</button>
-    <div v-for="li in list" :key="li.index">
-      Contract Name: {{li.content}}
+  <div v-for="li in list" :key="li.index">
+    Contract Name: {{li.content}}
+        <div class="functionsList" v-for="funct in functionList" :key="funct.index">
+    {{funct.content}}
+  </div>
+  <p></p>
     </div>
   <!-- <p>Contract Name: {{contractName}}</p> -->
   <h1 v-show="functionsLoaded">Functions:</h1>
-  <div v-if="functionList > 0">test</div>
-    <div v-for="funct in functionList" :key="funct.index">
+  <!-- <div v-if="functionList > 0">test</div> -->
+    <!-- <div class="functionsList" v-for="funct in functionList" :key="funct.index">
       {{funct.content}}
     </div>
-    <p></p>
+    <p></p> -->
   <p>{{text}}</p>
   <!-- <p>{{list}}</p> -->
   </div>
@@ -53,7 +57,7 @@ export default {
 
       const file = ev.target.files[0]
       const textType = /text.*/
-      if (file.type.match(textType)) {
+      // if (file.type.match(textType)) {
         var reader = new FileReader()
 
         reader.onload = function (e) {
@@ -68,9 +72,9 @@ export default {
         }
         reader.readAsText(file)
         // this.text = reader.result;
-      } else {
-        console.log('File not supported!')
-      }
+      // } else {
+        // console.log('File not supported!')
+      // }
       // const reader = new FileReader()
       // reader.onload = e => this.$emit('load', e.target.result)
       // reader.readAsText(file)
@@ -174,5 +178,12 @@ export default {
   left: 0;
   z-index: -1;
   opacity: 0;
+}
+.functionsList{
+  background-color: gray;
+  text-align: left;
+  padding: 5px;
+  border-radius: 5px;
+  margin-top: 5px;
 }
 </style>
