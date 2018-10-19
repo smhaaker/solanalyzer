@@ -5,7 +5,7 @@
 
     <label class="text-reader">
       Load File
-      <input type="file" @change="loadTextFromFile" multiple>
+      <input type="file" @change="readMupltieFiles" multiple>
     </label>
     <label class="text-reader">
       Analyze
@@ -21,6 +21,7 @@
     </li>
   </ul>
   </div>
+  <!-- Should be sorted by type -->
   <div class="functions">
     <div v-for="li in contractNameList" :key="li.index">
       <h4 class="contractTitle">Contract Name: {{li.content}}</h4>
@@ -31,14 +32,19 @@
     <p></p>
     </div>
   </div>
+  <div v-for="functs in functionList" :key="functs.index">
+    {{functs.content}}
+  </div>
   <!-- <p>Contract Name: {{contractName}}</p> -->
     <!-- <div class="functionsList" v-for="funct in functionList" :key="funct.index">
       {{funct.content}}
     </div>
     <p></p> -->
+    <p>{{functionList}}</p>
   <p>text {{text}}</p>
     <div v-for="tx in text" :key="tx.index">
-      {{tx.index}}
+      <b>ID</b>:  {{tx.id}}
+      <b>CONTENT</b>:  {{tx.content}}
     </div>
     <p>{{files}}</p>
     <p>Testlist: {{testList}}</p>
@@ -64,16 +70,16 @@ export default {
   },
   methods: {
     loadTextFromFile (ev) {
-      var vm = this
+      let vm = this
       vm.filesLoaded = true
-      let resultArray = []
+      // let resultArray = []
       // File list Output
       // console.log(ev.target.files)
       // push({id: i, content: result[i]})
       // vm.files.push({id: i, content:ev.target.files})
       vm.files = ev.target.files
       for (let i = 0; i < ev.target.files.length; i++) {
-        var reader = new FileReader()
+        let reader = new FileReader()
         reader.onload = function (e) {
           vm.text = reader.result
           // resultArray.push(reader.result)
@@ -86,18 +92,58 @@ export default {
         console.log('count: ' + i)
         const file = ev.target.files[i] // sets to first uploaded file
         reader.readAsText(file)
-        // reader.abort()
       }
+    },
+    readMupltieFiles (ev) { // this seems to work. Now we need to fix the parser.
+      let vm = this
+      console.log('read many files')
+      const files = ev.currentTarget.files;
+      vm.files = ev.target.files
+      Object.keys(files).forEach(i => {
+        vm.text.splice(i) // Clear old array
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          //server call for uploading or reading the files one-by-one
+          //by using 'reader.result' or 'file'
+          // vm.text = reader.result
+          vm.text.push({id: i, content: reader.result})
+        }
+        reader.readAsBinaryString(file);
+      })
     },
     analyze () {
       let vm = this
       console.log('amount of files: ' + vm.files.length)
       // We need to loop over multiple files here.
-      this.findElements(vm.text, 'function ', '{', vm.functionList)
-      this.findElements(vm.text, 'contract ', '{', vm.contractNameList)
-      // To write into object
+      // this.findElements(vm.text, 'function ', '{', vm.functionList)
+      // this.findElements(vm.text, 'contract ', '{', vm.contractNameList)
+      // // To write into object
       // this.findElements(vm.text, 'function ', '{', vm.testList.function)
       // this.findElements(vm.text, 'contract ', '{', vm.contractNameList)
+      for (let i = 0; i < vm.files.length; i++) {
+        // this.findTest(vm.text[i].content, 'function')
+        this.findElements(vm.text[i].content, 'contract ', '{', vm.contractNameList)
+        this.findElements(vm.text[i].content, 'function ', '{', vm.functionList)
+      }
+
+      // this.findTest(vm.text[0].content, 'contract')
+      // this.findTest(vm.text[1].content, 'contract')
+    },
+    findTest (source, find) {
+      let vm = this
+      let startString = []
+      let result = []
+      console.log('Type: ' + find)
+      console.log(source)
+      for (let i = 0; i < source.length; ++i) {
+        // If you want to search case insensitive use
+        // if (source.substring(i, i + find.length).toLowerCase() == find) {
+        if (source.substring(i, i + find.length) === find) {
+          startString.push(i)
+          console.log(i)
+        }
+      }
     },
     findElements (source, find, endChar, listNew) {
       let vm = this
@@ -118,12 +164,13 @@ export default {
       // console.log(startString)
       // Loop to find start and end of new string.
       for (let i = 0; i < startString.length; i++) {
-        let searchIndex = startString[i] + vm.text.substring(startString[i]).indexOf(endChar)
+        let searchIndex = startString[i] + source.substring(startString[i]).indexOf(endChar)
         // console.log('Search Indexes ' + searchIndex)
-        console.log('Found: ' + vm.text.slice(startString[i] + 9, searchIndex))
+        console.log('Found: ' + source.slice(startString[i] + 9, searchIndex))
         // Pushes found word to result array
-        let funct = vm.text.slice(startString[i] + 9, searchIndex)
+        let funct = source.slice(startString[i] + 9, searchIndex)
         result.push(funct)
+        // simplify
       }
       // Loop over result array to push to data object
       for (let i = 0; i < result.length; i++) {
