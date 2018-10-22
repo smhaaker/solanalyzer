@@ -2,17 +2,16 @@
   <div>
     <h2>Solidity Contract Analyzer</h2>
     <p>Please load a smart contract and analyze, for now it only outputs functions and contract name.</p>
-
     <label class="text-reader">
-      Load File
+      Load Files
       <input type="file" @change="readMupltieFiles" multiple>
     </label>
     <label class="text-reader">
       Analyze
       <input type="button" @click="analyze">
     </label>
-  <!-- <button class="text-reader" @click="analyze">Analyze</button> -->
   <div id="filesList">
+    <p>Files Loaded:</p>
   <ul id="fileRender"><h2 v-show="filesLoaded">Files Loaded:</h2>
     <li v-for="file in files" :key="file.index">
       <b>Name:</b> {{ file.name }}
@@ -21,7 +20,6 @@
     </li>
   </ul>
   </div>
-  <!-- Should be sorted by type -->
   <!-- <div class="functions">
     <div v-for="li in contractNameList" :key="li.index">
       <h4 class="contractTitle">Contract Name: {{li.content}}</h4>
@@ -32,7 +30,7 @@
     <p></p>
     </div>
   </div> -->
-    <div class='analyzed' v-for="li in testList" :key="li.index">
+    <div class='analyzed' v-for="li in contractContent" :key="li.index">
       <br>
       <div class='contracts'>
         <b>Contract ID: </b><br>{{li.id}} <br>
@@ -70,7 +68,7 @@ export default {
       functionsLoaded: null,
       filesLoaded: null,
       contractNameList: [],
-      ok: null,
+      contractContent: [],
       testList: [{
         id: 1,
         contractName: 'hello there',
@@ -104,62 +102,32 @@ export default {
     //     reader.readAsText(file)
     //   }
     // },
-    readMupltieFiles (ev) { // this seems to work. Now we need to fix the parser.
+    readMupltieFiles (ev) {
       let vm = this
       console.log('read many files')
-      const files = ev.currentTarget.files;
+      const files = ev.currentTarget.files
       vm.files = ev.target.files
       Object.keys(files).forEach(i => {
         vm.text.splice(i) // Clear old array
-        const file = files[i];
-        const reader = new FileReader();
+        const file = files[i]
+        const reader = new FileReader()
         reader.onload = (ev) => {
-          //server call for uploading or reading the files one-by-one
-          //by using 'reader.result' or 'file'
-          // vm.text = reader.result
           vm.text.push({id: i, content: reader.result})
         }
-        reader.readAsBinaryString(file);
+        reader.readAsBinaryString(file)
       })
     },
     analyze () {
       let vm = this
-            vm.testList.splice(0) // emptys testlist object
-
-      console.log('amount of files: ' + vm.files.length)
-      // We need to loop over multiple files here.
-      // this.findElements(vm.text, 'function ', '{', vm.functionList)
-      // this.findElements(vm.text, 'contract ', '{', vm.contractNameList)
-      // // To write into object
-      // this.findElements(vm.text, 'function ', '{', vm.testList.function)
-      // this.findElements(vm.text, 'contract ', '{', vm.contractNameList)
+      vm.contractContent.splice(0) // Emptys contractContent object
       for (let i = 0; i < vm.files.length; i++) {
-        // this.findTest(vm.text[i].content, 'function')
         let foundContracts = this.findElements(vm.text[i].content, 'contract ', '{', vm.contractNameList)
         let foundFunctions = this.findElements(vm.text[i].content, 'function ', '{', vm.functionList)
-
-        // first find contract elements. then find all functions in that and push to testlist as:
-        vm.testList.push({id: i, contractName: foundContracts, functions: foundFunctions})
-        this.findElements(vm.text[i].content, 'function ', '{', vm.functionList)
+        vm.contractContent.push({id: i, contractName: foundContracts, functions: foundFunctions})
       }
     },
-    // findTest (source, find) {
-    //   let vm = this
-    //   let startString = []
-    //   let result = []
-    //   console.log('Type: ' + find)
-    //   console.log(source)
-    //   for (let i = 0; i < source.length; ++i) {
-    //     // If you want to search case insensitive use
-    //     // if (source.substring(i, i + find.length).toLowerCase() == find) {
-    //     if (source.substring(i, i + find.length) === find) {
-    //       startString.push(i)
-    //       console.log(i)
-    //     }
-    //   }
-    // },
     findElements (source, find, endChar, listNew) {
-      let vm = this
+      // let vm = this
       let startString = []
       let result = []
       console.log('Type: ' + find)
@@ -170,28 +138,22 @@ export default {
           startString.push(i)
         }
       }
-      // display text on webpage if functions are loaded. Clear this to any.
+      // Display text on webpage if functions are loaded.
       if (source.length > 0) {
         this.functionsLoaded = true
       }
-      // console.log(startString)
       // Loop to find start and end of new string.
       for (let i = 0; i < startString.length; i++) {
         let searchIndex = startString[i] + source.substring(startString[i]).indexOf(endChar)
-        // console.log('Search Indexes ' + searchIndex)
-        console.log('Found: ' + source.slice(startString[i] + 9, searchIndex))
-        // Pushes found word to result array
-        let funct = source.slice(startString[i] + 9, searchIndex)
-        result.push(funct)
-        // simplify
+        result.push(source.slice(startString[i] + 9, searchIndex))
       }
-      // Loop over result array to push to data object
-      for (let i = 0; i < result.length; i++) {
-        console.log('arrayLoop: index: ' + i + ' is: ' + result[i])
-        listNew.splice(i) // Clear old array
-        listNew.push({id: i, content: result[i]})
-      }
-      console.log('RESULTS!!!!: ' + result)
+      // // Loop over result array to push to data object
+      // for (let i = 0; i < result.length; i++) {
+      //   // console.log('arrayLoop: index: ' + i + ' is: ' + result[i])
+      //   listNew.splice(i) // Clear old array
+      //   listNew.push({id: i, content: result[i]})
+      // }
+      console.log('Result Output: ' + result)
       return result
     }
   }
@@ -208,6 +170,7 @@ export default {
   border-radius: 5px;
   padding: 18px 40px;
   cursor: pointer;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 .text-reader input {
   position: absolute;
@@ -216,6 +179,12 @@ export default {
   z-index: -1;
   opacity: 0;
 }
+.text-reader:hover{
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+.text-reader:active{
+  background-color: goldenrod;
+}
 .analyzed{
   background-color: white;
   text-align: left;
@@ -223,37 +192,12 @@ export default {
 }
 .contracts{
   border: 1px solid black;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   padding: 5px;
-}
-.functions{
-  align-content: left;
-  background-color: darkgray;
-  border-top-left-radius: 15px;
-}
-.functionsList{
-  background-color: gray;
-  text-align: left;
-  padding: 5px;
-  /* border-radius: 5px; */
-  margin-top: 5px;
-  width: 30%;
-}
-.title{
-  text-align: left;
-  padding: 5px;
-  background-color: darkgreen;
-  width: 30%;
-}
-.contractTitle{
-  text-align: left;
-  padding: 5px;
-  background-color: aqua;
-  border-top-left-radius: 15px;
+  border-radius: 5px;
 }
 #fileRender{
-  list-style: none;
-}
-#filesList{
   text-align: left;
+  list-style: none;
 }
 </style>
