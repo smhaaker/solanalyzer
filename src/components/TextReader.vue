@@ -1,7 +1,8 @@
 <template>
   <div>
     <h2>Solidity Contract Analyzer</h2>
-    <p>Please load a smart contract and analyze, for now it only outputs functions and contract name.</p>
+    <p>Please load one or more solidity contracts and analyze.</p>
+    <p>Feel free to make additions as it is in very early development right now.</p>
     <label class="text-reader">
       Load Files
       <input type="file" @change="readMupltieFiles" multiple>
@@ -20,38 +21,29 @@
     </li>
   </ul>
   </div>
-  <!-- <div class="functions">
-    <div v-for="li in contractNameList" :key="li.index">
-      <h4 class="contractTitle">Contract Name: {{li.content}}</h4>
-      <h4 class="title" v-show="functionsLoaded">Functions:</h4>
-      <div class="functionsList" v-for="funct in functionList" :key="funct.index">
-      {{funct.id}} {{funct.content}}
+  <div class='analyzed' v-for="li in contractContent" :key="li.index">
+    <br>
+    <div class='contracts'>
+      <b>Contract ID: </b><br>{{li.id}} <br>
+      <b>Contract Name: </b>
+      <div v-for="cont in li.contractName" :key="cont.index">
+        {{cont}}
       </div>
-    <p></p>
+      <b>Contract Functions: </b>
+      <div v-for="funct in li.functions" :key="funct.index">
+        {{funct}}
+      </div>
     </div>
-  </div> -->
-    <div class='analyzed' v-for="li in contractContent" :key="li.index">
-      <br>
-      <div class='contracts'>
-        <b>Contract ID: </b><br>{{li.id}} <br>
-        <b>Contract Name: </b>
-        <div v-for="cont in li.contractName" :key="cont.index">
-          {{cont}}
-        </div>
-        <b>Contract Functions: </b>
-        <div v-for="funct in li.functions" :key="funct.index">
-          {{funct}}
-        </div>
-      </div>
-    </div><br>
+  </div><br>
 
   <!-- <p>text {{text}}</p> -->
+  <!-- Below displays full text in text array -->
     <!-- <div v-for="tx in text" :key="tx.index">
       <b>ID</b>:  {{tx.id}}
       <b>CONTENT</b>:  {{tx.content}}
-    </div>
-    <p>{{files}}</p>
-    <p>Testlist: {{testList}}</p> -->
+    </div> -->
+  <!-- TestList displays sample data output-->
+  <!-- <p>TestList: {{testList}}</p> -->
 
   </div>
 </template>
@@ -63,9 +55,7 @@ export default {
       files: null,
       text: [],
       contractName: null,
-      contractArray: null,
       functionList: [],
-      functionsLoaded: null,
       filesLoaded: null,
       contractNameList: [],
       contractContent: [],
@@ -104,6 +94,7 @@ export default {
     // },
     readMupltieFiles (ev) {
       let vm = this
+      vm.filesLoaded = true
       console.log('read many files')
       const files = ev.currentTarget.files
       vm.files = ev.target.files
@@ -139,9 +130,9 @@ export default {
         }
       }
       // Display text on webpage if functions are loaded.
-      if (source.length > 0) {
-        this.functionsLoaded = true
-      }
+      // if (source.length > 0) {
+      //   this.functionsLoaded = true
+      // }
       // Loop to find start and end of new string.
       for (let i = 0; i < startString.length; i++) {
         let searchIndex = startString[i] + source.substring(startString[i]).indexOf(endChar)
