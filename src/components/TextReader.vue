@@ -33,6 +33,10 @@
       <div v-for="funct in li.functions" :key="funct.index">
         {{funct}}
       </div>
+      <b>Contract Events: </b>
+      <div v-for="evt in li.events" :key="evt.index">
+        {{evt}}
+      </div>
     </div>
   </div><br>
 
@@ -113,8 +117,9 @@ export default {
       vm.contractContent.splice(0) // Emptys contractContent object
       for (let i = 0; i < vm.files.length; i++) {
         let foundContracts = this.findElements(vm.text[i].content, 'contract ', '{', vm.contractNameList)
+        let foundEvents = this.findElements(vm.text[i].content, 'event ', ';', vm.contractNameList)
         let foundFunctions = this.findElements(vm.text[i].content, 'function ', '{', vm.functionList)
-        vm.contractContent.push({id: i, contractName: foundContracts, functions: foundFunctions})
+        vm.contractContent.push({id: i, contractName: foundContracts, functions: foundFunctions, events: foundEvents})
       }
     },
     findElements (source, find, endChar, listNew) {
