@@ -136,7 +136,7 @@ export default {
       // Loop to find start and end of new string.
       for (let i = 0; i < startString.length; i++) {
         let searchIndex = startString[i] + source.substring(startString[i]).indexOf(endChar)
-        result.push(source.slice(startString[i] + 9, searchIndex))
+        result.push(source.slice(startString[i] + find.length, searchIndex))
       }
       // console.log('Result Output: ' + result)
       return result
