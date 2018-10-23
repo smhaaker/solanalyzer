@@ -24,7 +24,7 @@
   <div class='analyzed' v-for="li in contractContent" :key="li.index">
     <br>
     <div class='contracts'>
-      <b>Contract ID: </b><br>{{li.id}} <br>
+      <b>File ID: </b><br>{{li.id}} <br>
       <b>Contract Name: </b>
       <div v-for="cont in li.contractName" :key="cont.index">
         {{cont}}
@@ -99,7 +99,7 @@ export default {
     readMupltieFiles (ev) {
       let vm = this
       vm.filesLoaded = true
-      console.log('read many files')
+      console.log('Read Multiple Files')
       const files = ev.currentTarget.files
       vm.files = ev.target.files
       Object.keys(files).forEach(i => {
@@ -116,17 +116,16 @@ export default {
       let vm = this
       vm.contractContent.splice(0) // Emptys contractContent object
       for (let i = 0; i < vm.files.length; i++) {
-        let foundContracts = this.findElements(vm.text[i].content, 'contract ', '{', vm.contractNameList)
-        let foundEvents = this.findElements(vm.text[i].content, 'event ', ';', vm.contractNameList)
-        let foundFunctions = this.findElements(vm.text[i].content, 'function ', '{', vm.functionList)
+        let foundContracts = this.findElements(vm.text[i].content, 'contract ', '{')
+        let foundEvents = this.findElements(vm.text[i].content, 'event ', ';')
+        let foundFunctions = this.findElements(vm.text[i].content, 'function ', '{')
         vm.contractContent.push({id: i, contractName: foundContracts, functions: foundFunctions, events: foundEvents})
       }
     },
-    findElements (source, find, endChar, listNew) {
-      // let vm = this
+    findElements (source, find, endChar) {
       let startString = []
       let result = []
-      console.log('Type: ' + find)
+      // console.log('Type: ' + find)
       for (let i = 0; i < source.length; ++i) {
         // If you want to search case insensitive use
         // if (source.substring(i, i + find.length).toLowerCase() == find) {
@@ -134,22 +133,12 @@ export default {
           startString.push(i)
         }
       }
-      // Display text on webpage if functions are loaded.
-      // if (source.length > 0) {
-      //   this.functionsLoaded = true
-      // }
       // Loop to find start and end of new string.
       for (let i = 0; i < startString.length; i++) {
         let searchIndex = startString[i] + source.substring(startString[i]).indexOf(endChar)
         result.push(source.slice(startString[i] + 9, searchIndex))
       }
-      // // Loop over result array to push to data object
-      // for (let i = 0; i < result.length; i++) {
-      //   // console.log('arrayLoop: index: ' + i + ' is: ' + result[i])
-      //   listNew.splice(i) // Clear old array
-      //   listNew.push({id: i, content: result[i]})
-      // }
-      console.log('Result Output: ' + result)
+      // console.log('Result Output: ' + result)
       return result
     }
   }
