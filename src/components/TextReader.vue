@@ -125,14 +125,26 @@ export default {
     findElements (source, find, endChar) {
       let startString = []
       let result = []
+      let ignore = []
+      let ignoreBlock = []
       // console.log('Type: ' + find)
       for (let i = 0; i < source.length; ++i) {
+        if (source.substring(i, i + 2) === '//') {
+          // console.log('found comment at: ' + i)
+          ignore.push(i)
+        }
+        if (source.substring(i, i + 2) === '/*') {
+          // console.log('found comment at: ' + i)
+          ignoreBlock.push(i)
+        }
         // If you want to search case insensitive use
         // if (source.substring(i, i + find.length).toLowerCase() == find) {
         if (source.substring(i, i + find.length) === find) {
           startString.push(i)
         }
       }
+      console.log('ignores foud: ' + ignore)
+      console.log('ignoreBlock found: ' + ignoreBlock)
       // Loop to find start and end of new string.
       for (let i = 0; i < startString.length; i++) {
         let searchIndex = startString[i] + source.substring(startString[i]).indexOf(endChar)
