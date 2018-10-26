@@ -116,6 +116,8 @@ export default {
       let vm = this
       vm.contractContent.splice(0) // Emptys contractContent object
       for (let i = 0; i < vm.files.length; i++) {
+        // scan for variables and structs prior to functions listed.
+        // ignore all inside functions
         let foundContracts = this.findElements(vm.text[i].content, 'contract ', '{')
         let foundEvents = this.findElements(vm.text[i].content, 'event ', ';')
         let foundFunctions = this.findElements(vm.text[i].content, 'function ', '{')
@@ -133,7 +135,7 @@ export default {
           // console.log('found comment at: ' + i)
           ignore.push(i)
         }
-        if (source.substring(i, i + 2) === '/*') {
+        if (source.substring(i, i + 2) === '/*' || source.substring(i, i + 2) === '*/') {
           // console.log('found comment at: ' + i)
           ignoreBlock.push(i)
         }
