@@ -40,12 +40,12 @@
     </div>
   </div><br>
 
-  <!-- <p>text {{text}}</p> -->
+  <p>text {{text}}</p>
   <!-- Below displays full text in text array -->
-    <!-- <div v-for="tx in text" :key="tx.index">
+    <div v-for="tx in text" :key="tx.index">
       <b>ID</b>:  {{tx.id}}
       <b>CONTENT</b>:  {{tx.content}}
-    </div> -->
+    </div>
   <!-- TestList displays sample data output-->
   <!-- <p>TestList: {{testList}}</p> -->
 
@@ -129,6 +129,7 @@ export default {
       let result = []
       let ignore = []
       let ignoreBlock = []
+      let lineBreaks = []
       // console.log('Type: ' + find)
       for (let i = 0; i < source.length; ++i) {
         if (source.substring(i, i + 2) === '//') {
@@ -139,21 +140,40 @@ export default {
           // console.log('found comment at: ' + i)
           ignoreBlock.push(i)
         }
+        if (source.substring(i, i + 2) === '\r\n') {
+          // console.log('FOUND LINEBREAKS: ' + i)
+          lineBreaks.push(i)
+        }
         // If you want to search case insensitive use
         // if (source.substring(i, i + find.length).toLowerCase() == find) {
         if (source.substring(i, i + find.length) === find) {
           startString.push(i)
         }
       }
-      console.log('ignores foud: ' + ignore)
-      console.log('ignoreBlock found: ' + ignoreBlock)
-      // Loop to find start and end of new string.
+      console.log('ignores found: ' + ignore + ' in ' + find)
+      console.log('ignoreBlock found: ' + ignoreBlock + ' in ' + find)
+      console.log('linebreaks found: ' + lineBreaks + ' in ' + find)
+      console.log('startStrings: ' + startString + ' in ' + find)
+
       for (let i = 0; i < startString.length; i++) {
         let searchIndex = startString[i] + source.substring(startString[i]).indexOf(endChar)
         result.push(source.slice(startString[i] + find.length, searchIndex))
       }
       // console.log('Result Output: ' + result)
       return result
+    },
+    findToIgnore (value) {
+      return function (element, index, array) {
+        return (element >= value)
+        // return (element <= value && element >= secondValue)
+      }
+    },
+    // filter between start and stop of block.
+    findToIgnoreBlock (value) {
+      return function (element, index, array) {
+        // element must be between arrayvalue even and odd
+        return (element % 2 === 0)
+      }
     }
   }
 }
