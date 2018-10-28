@@ -125,11 +125,11 @@ export default {
       // console.log(vm.text[0].content.replace(/\/\//g, 'Comments'))
       vm.contractContent.splice(0) // Emptys contractContent object
       for (let i = 0; i < vm.files.length; i++) {
-        // scan for variables and structs prior to functions listed.
-        // ignore all inside functions
-        let foundContracts = this.findElements(vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, ''), 'contract ', '{')
-        let foundEvents = this.findElements(vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, ''), 'event ', ';')
-        let foundFunctions = this.findElements(vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, ''), 'function ', '{')
+        let commentsStripped = vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, '')
+        // if multiple contracts found in same file increase contract counter
+        let foundContracts = this.findElements(commentsStripped, 'contract ', '{')
+        let foundEvents = this.findElements(commentsStripped, 'event ', ';')
+        let foundFunctions = this.findElements(commentsStripped, 'function ', '{')
         vm.contractContent.push({id: i, contractName: foundContracts, functions: foundFunctions, events: foundEvents})
       }
     },
