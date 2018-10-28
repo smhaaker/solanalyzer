@@ -114,13 +114,22 @@ export default {
     },
     analyze () {
       let vm = this
+      // console.log(vm.text[0].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, ''))
+      // regex replace commands, saving until tests are done.
+      // console.log(vm.text[0].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, ''))
+      // console.log(vm.text[0].content.replace(/\/\*[^*]+\*\//g, '')) // backslash asterisk
+
+      // console.log(vm.text[0].content.replace(/\/\*/g, 'asterisk')) // backslash asterisk
+      // console.log(vm.text[0].content.replace(/\*\//g, 'asterisk')) // asterisk forwardslash
+
+      // console.log(vm.text[0].content.replace(/\/\//g, 'Comments'))
       vm.contractContent.splice(0) // Emptys contractContent object
       for (let i = 0; i < vm.files.length; i++) {
         // scan for variables and structs prior to functions listed.
         // ignore all inside functions
-        let foundContracts = this.findElements(vm.text[i].content, 'contract ', '{')
-        let foundEvents = this.findElements(vm.text[i].content, 'event ', ';')
-        let foundFunctions = this.findElements(vm.text[i].content, 'function ', '{')
+        let foundContracts = this.findElements(vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, ''), 'contract ', '{')
+        let foundEvents = this.findElements(vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, ''), 'event ', ';')
+        let foundFunctions = this.findElements(vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, ''), 'function ', '{')
         vm.contractContent.push({id: i, contractName: foundContracts, functions: foundFunctions, events: foundEvents})
       }
     },
@@ -140,7 +149,7 @@ export default {
           // console.log('found comment at: ' + i)
           ignoreBlock.push(i)
         }
-        if (source.substring(i, i + 2) === '\r\n') {
+        if (source.substring(i, i + 1) === '\n') { // add '\n' and \n\n , /\r\n|\r|\n/g
           // console.log('FOUND LINEBREAKS: ' + i)
           lineBreaks.push(i)
         }
@@ -150,16 +159,31 @@ export default {
           startString.push(i)
         }
       }
-      console.log('ignores found: ' + ignore + ' in ' + find)
-      console.log('ignoreBlock found: ' + ignoreBlock + ' in ' + find)
-      console.log('linebreaks found: ' + lineBreaks + ' in ' + find)
-      console.log('startStrings: ' + startString + ' in ' + find)
+      // console.log('ignores found: ' + ignore + ' in ' + find)
+      // console.log('ignoreBlock found: ' + ignoreBlock + ' in ' + find)
+      // console.log('linebreaks found: ' + lineBreaks + ' in ' + find)
+      // console.log('startStrings: ' + startString + ' in ' + find)
+
+      for (let j = 0; j < ignore.length; j++) {
+        console.log('All the ignores ' + ignore[j])
+        let found = lineBreaks.find(function (element) {
+          return element > ignore[j]
+        })
+        console.log(found)
+      }
 
       for (let i = 0; i < startString.length; i++) {
         let searchIndex = startString[i] + source.substring(startString[i]).indexOf(endChar)
         result.push(source.slice(startString[i] + find.length, searchIndex))
       }
       // console.log('Result Output: ' + result)
+
+      // let found = lineBreaks.find(function (element) {
+      //   return element > ignore[1] // first linebreak after an ignore
+      // })
+
+      // console.log(found)
+
       return result
     },
     findToIgnore (value) {
