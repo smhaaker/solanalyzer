@@ -29,6 +29,10 @@
       <div v-for="cont in li.contractName" :key="cont.index">
         {{cont}}
       </div>
+      <b>Pragma Version: </b>
+      <div v-for="prag in li.pragma" :key="prag.index">
+        {{prag}}
+      </div>
       <b>Contract Functions: </b>
       <div v-for="funct in li.functions" :key="funct.index">
         {{funct}}
@@ -128,9 +132,12 @@ export default {
         let commentsStripped = vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, '')
         // if multiple contracts found in same file increase contract counter
         let foundContracts = this.findElements(commentsStripped, 'contract ', '{')
+        let foundPragma = this.findElements(commentsStripped, 'pragma ', ';')
         let foundEvents = this.findElements(commentsStripped, 'event ', ';')
         let foundFunctions = this.findElements(commentsStripped, 'function ', '{')
-        vm.contractContent.push({id: i, contractName: foundContracts, functions: foundFunctions, events: foundEvents})
+        // find version pragma // pragma solidity ^0.4.0;
+        vm.contractContent.push({id: i, pragma: foundPragma,contractName: foundContracts, functions: foundFunctions, events: foundEvents})
+  
       }
     },
     findElements (source, find, endChar) {
