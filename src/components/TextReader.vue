@@ -118,7 +118,7 @@ export default {
     },
     analyze () {
       let vm = this
-      // console.log(vm.text[0].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, ''))
+      // console.log(vm.text[0].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, '').replace(/\/\*\*[^*]+\*\//g, ''))
       // regex replace commands, saving until tests are done.
       // console.log(vm.text[0].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, ''))
       // console.log(vm.text[0].content.replace(/\/\*[^*]+\*\//g, '')) // backslash asterisk
@@ -129,15 +129,14 @@ export default {
       // console.log(vm.text[0].content.replace(/\/\//g, 'Comments'))
       vm.contractContent.splice(0) // Emptys contractContent object
       for (let i = 0; i < vm.files.length; i++) {
-        let commentsStripped = vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, '')
+        let commentsStripped = vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, '').replace(/\/\*\*[^*]+\*\//g, '')
         // if multiple contracts found in same file increase contract counter
         let foundContracts = this.findElements(commentsStripped, 'contract ', '{')
         let foundPragma = this.findElements(commentsStripped, 'pragma ', ';')
         let foundEvents = this.findElements(commentsStripped, 'event ', ';')
         let foundFunctions = this.findElements(commentsStripped, 'function ', '{')
         // find version pragma // pragma solidity ^0.4.0;
-        vm.contractContent.push({id: i, pragma: foundPragma,contractName: foundContracts, functions: foundFunctions, events: foundEvents})
-  
+        vm.contractContent.push({id: i, pragma: foundPragma, contractName: foundContracts, functions: foundFunctions, events: foundEvents})
       }
     },
     findElements (source, find, endChar) {
