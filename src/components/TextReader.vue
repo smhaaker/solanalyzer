@@ -44,12 +44,12 @@
     </div>
   </div><br>
 
-  <p>text {{text}}</p>
+  <!-- <p>text {{text}}</p> -->
   <!-- Below displays full text in text array -->
-    <div v-for="tx in text" :key="tx.index">
+    <!-- <div v-for="tx in text" :key="tx.index">
       <b>ID</b>:  {{tx.id}}
       <b>CONTENT</b>:  {{tx.content}}
-    </div>
+    </div> -->
   <!-- TestList displays sample data output-->
   <!-- <p>TestList: {{testList}}</p> -->
 
@@ -135,7 +135,6 @@ export default {
         let foundPragma = this.findElements(commentsStripped, 'pragma ', ';')
         let foundEvents = this.findElements(commentsStripped, 'event ', ';')
         let foundFunctions = this.findElements(commentsStripped, 'function ', '{')
-        // find version pragma // pragma solidity ^0.4.0;
         vm.contractContent.push({id: i, pragma: foundPragma, contractName: foundContracts, functions: foundFunctions, events: foundEvents})
       }
     },
@@ -147,18 +146,18 @@ export default {
       let lineBreaks = []
       // console.log('Type: ' + find)
       for (let i = 0; i < source.length; ++i) {
-        if (source.substring(i, i + 2) === '//') {
-          // console.log('found comment at: ' + i)
-          ignore.push(i)
-        }
-        if (source.substring(i, i + 2) === '/*' || source.substring(i, i + 2) === '*/') {
-          // console.log('found comment at: ' + i)
-          ignoreBlock.push(i)
-        }
-        if (source.substring(i, i + 1) === '\n') { // add '\n' and \n\n , /\r\n|\r|\n/g
-          // console.log('FOUND LINEBREAKS: ' + i)
-          lineBreaks.push(i)
-        }
+        // if (source.substring(i, i + 2) === '//') {
+        //   // console.log('found comment at: ' + i)
+        //   ignore.push(i)
+        // }
+        // if (source.substring(i, i + 2) === '/*' || source.substring(i, i + 2) === '*/') {
+        //   // console.log('found comment at: ' + i)
+        //   ignoreBlock.push(i)
+        // }
+        // if (source.substring(i, i + 1) === '\n') { // add '\n' and \n\n , /\r\n|\r|\n/g
+        //   // console.log('FOUND LINEBREAKS: ' + i)
+        //   lineBreaks.push(i)
+        // }
         // If you want to search case insensitive use
         // if (source.substring(i, i + find.length).toLowerCase() == find) {
         if (source.substring(i, i + find.length) === find) {
@@ -183,13 +182,6 @@ export default {
         result.push(source.slice(startString[i] + find.length, searchIndex))
       }
       // console.log('Result Output: ' + result)
-
-      // let found = lineBreaks.find(function (element) {
-      //   return element > ignore[1] // first linebreak after an ignore
-      // })
-
-      // console.log(found)
-
       return result
     },
     findToIgnore (value) {
