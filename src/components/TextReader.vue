@@ -2,7 +2,7 @@
   <div>
     <h2>Solidity Contract Analyzer</h2>
     <p>Please load one or more solidity contracts and analyze.</p>
-    <p>Feel free to make additions as it is in very early development right now.</p>
+    <p>Suggestions welcome</p>
     <label class="text-reader">
       Load Files
       <input type="file" @change="readMupltieFiles" multiple>
@@ -12,7 +12,7 @@
       <input type="button" @click="analyze">
     </label>
   <div id="filesList">
-    <p>Files Loaded:</p>
+    <p v-if="filesLoaded">Files Loaded:</p>
   <ul id="fileRender"><h2 v-show="filesLoaded">Files Loaded:</h2>
     <li v-for="file in files" :key="file.index">
       <b>Name:</b> {{ file.name }}
@@ -24,30 +24,30 @@
   <div class='analyzed' v-for="li in contractContent" :key="li.index">
     <br>
     <div class='contracts'>
-      <b>File ID: </b><br>{{li.id}} <br>
-      <b>Contract Name: </b>
-      <div v-for="cont in li.contractName" :key="cont.index">
+      <!-- <b>File ID: </b><br>{{li.id}} <br> -->
+      <b id="listTitle">Contract Name: </b>
+      <div id="list" v-for="cont in li.contractName" :key="cont.index">
         {{cont}}
       </div>
-      <b v-if="li.pragma.length > 0">Pragma Version: </b>
-      <div v-for="prag in li.pragma" :key="prag.index">
+      <b id="listTitle" v-if="li.pragma.length > 0">Pragma Version: </b>
+      <div id="list" v-for="prag in li.pragma" :key="prag.index">
         {{prag}}
       </div>
-      <b v-if="li.functions.length > 0">Contract Functions: </b>
-      <div v-for="funct in li.functions" :key="funct.index">
+      <b id="listTitle" v-if="li.functions.length > 0">Contract Functions: </b>
+      <div id="list" v-for="funct in li.functions" :key="funct.index">
         {{funct}}
       </div>
-      <b v-if="li.events.length > 0">Contract Events: </b>
-      <div v-for="evt in li.events" :key="evt.index">
+      <b id="listTitle" v-if="li.events.length > 0">Contract Events: </b>
+      <div id="list" v-for="evt in li.events" :key="evt.index">
         {{evt}}
       </div>
     </div>
   </div><br>
 
-  <!-- Add: 
+  <!-- Add:
   - Whats missing in contract, such as name, pragma version and more.
-  - Libraries 
-  - Inherits from 
+  - Libraries
+  - Inherits from
   - Interfaces
   - Multiple contracts pr file -->
   <!-- <p>text {{text}}</p> -->
@@ -147,9 +147,9 @@ export default {
     findElements (source, find, endChar) {
       let startString = []
       let result = []
-      let ignore = []
-      let ignoreBlock = []
-      let lineBreaks = []
+      // let ignore = []
+      // let ignoreBlock = []
+      // let lineBreaks = []
       // console.log('Type: ' + find)
       for (let i = 0; i < source.length; ++i) {
         // if (source.substring(i, i + 2) === '//') {
@@ -175,13 +175,13 @@ export default {
       // console.log('linebreaks found: ' + lineBreaks + ' in ' + find)
       // console.log('startStrings: ' + startString + ' in ' + find)
 
-      for (let j = 0; j < ignore.length; j++) {
-        console.log('All the ignores ' + ignore[j])
-        let found = lineBreaks.find(function (element) {
-          return element > ignore[j]
-        })
-        console.log(found)
-      }
+      // for (let j = 0; j < ignore.length; j++) {
+      //   console.log('All the ignores ' + ignore[j])
+      //   let found = lineBreaks.find(function (element) {
+      //     return element > ignore[j]
+      //   })
+      //   console.log(found)
+      // }
 
       for (let i = 0; i < startString.length; i++) {
         let searchIndex = startString[i] + source.substring(startString[i]).indexOf(endChar)
@@ -190,19 +190,19 @@ export default {
       // console.log('Result Output: ' + result)
       return result
     },
-    findToIgnore (value) {
-      return function (element, index, array) {
-        return (element >= value)
-        // return (element <= value && element >= secondValue)
-      }
-    },
-    // filter between start and stop of block.
-    findToIgnoreBlock (value) {
-      return function (element, index, array) {
-        // element must be between arrayvalue even and odd
-        return (element % 2 === 0)
-      }
-    }
+    // findToIgnore (value) {
+    //   return function (element, index, array) {
+    //     return (element >= value)
+    //     // return (element <= value && element >= secondValue)
+    //   }
+    // },
+    // // filter between start and stop of block.
+    // findToIgnoreBlock (value) {
+    //   return function (element, index, array) {
+    //     // element must be between arrayvalue even and odd
+    //     return (element % 2 === 0)
+    //   }
+    // }
   }
 }
 </script>
@@ -246,5 +246,11 @@ export default {
 #fileRender{
   text-align: left;
   list-style: none;
+}
+#list{
+  padding: 2px;
+}
+#listTitle{
+  background-color: aqua;
 }
 </style>
