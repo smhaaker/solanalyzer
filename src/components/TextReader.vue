@@ -29,21 +29,27 @@
       <div v-for="cont in li.contractName" :key="cont.index">
         {{cont}}
       </div>
-      <b>Pragma Version: </b>
+      <b v-if="li.pragma.length > 0">Pragma Version: </b>
       <div v-for="prag in li.pragma" :key="prag.index">
         {{prag}}
       </div>
-      <b>Contract Functions: </b>
+      <b v-if="li.functions.length > 0">Contract Functions: </b>
       <div v-for="funct in li.functions" :key="funct.index">
         {{funct}}
       </div>
-      <b>Contract Events: </b>
+      <b v-if="li.events.length > 0">Contract Events: </b>
       <div v-for="evt in li.events" :key="evt.index">
         {{evt}}
       </div>
     </div>
   </div><br>
 
+  <!-- Add: 
+  - Whats missing in contract, such as name, pragma version and more.
+  - Libraries 
+  - Inherits from 
+  - Interfaces
+  - Multiple contracts pr file -->
   <!-- <p>text {{text}}</p> -->
   <!-- Below displays full text in text array -->
     <!-- <div v-for="tx in text" :key="tx.index">
