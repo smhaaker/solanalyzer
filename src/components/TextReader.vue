@@ -139,7 +139,8 @@ export default {
       vm.contractContent.splice(0) // Emptys contractContent object
       for (let i = 0; i < vm.files.length; i++) {
         let commentsStripped = vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, '').replace(/\/\*\*[^*]+\*\//g, '')
-        // if multiple contracts found in same file increase contract counter
+        // If multiple contracts found in same file increase contract counter
+        // Same with libraries
         let foundContracts = this.findElements(commentsStripped, 'contract ', '{')
         let foundPragma = this.findElements(commentsStripped, 'pragma ', ';')
         let foundEvents = this.findElements(commentsStripped, 'event ', ';')
