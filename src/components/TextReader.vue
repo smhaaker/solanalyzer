@@ -33,6 +33,10 @@
       <div id="list" v-for="prag in li.pragma" :key="prag.index">
         {{prag}}
       </div>
+      <b id="listTitle" v-if="li.libraryName.length > 0">Libraries: </b>
+      <div id="list" v-for="lib in li.libraryName" :key="lib.index">
+        {{lib}}
+      </div>
       <b id="listTitle" v-if="li.functions.length > 0">Contract Functions: </b>
       <div id="list" v-for="funct in li.functions" :key="funct.index">
         {{funct}}
@@ -109,7 +113,6 @@ export default {
     readMupltieFiles (ev) {
       let vm = this
       vm.filesLoaded = true
-      console.log('Read Multiple Files')
       const files = ev.currentTarget.files
       vm.files = ev.target.files
       Object.keys(files).forEach(i => {
@@ -141,47 +144,21 @@ export default {
         let foundPragma = this.findElements(commentsStripped, 'pragma ', ';')
         let foundEvents = this.findElements(commentsStripped, 'event ', ';')
         let foundFunctions = this.findElements(commentsStripped, 'function ', '{')
-        vm.contractContent.push({id: i, pragma: foundPragma, contractName: foundContracts, functions: foundFunctions, events: foundEvents})
+        let foundLibraries = this.findElements(commentsStripped, 'library ', '{')
+        vm.contractContent.push({id: i, pragma: foundPragma, contractName: foundContracts, libraryName: foundLibraries, functions: foundFunctions, events: foundEvents})
       }
     },
     findElements (source, find, endChar) {
       let startString = []
       let result = []
-      // let ignore = []
-      // let ignoreBlock = []
-      // let lineBreaks = []
       // console.log('Type: ' + find)
       for (let i = 0; i < source.length; ++i) {
-        // if (source.substring(i, i + 2) === '//') {
-        //   // console.log('found comment at: ' + i)
-        //   ignore.push(i)
-        // }
-        // if (source.substring(i, i + 2) === '/*' || source.substring(i, i + 2) === '*/') {
-        //   // console.log('found comment at: ' + i)
-        //   ignoreBlock.push(i)
-        // }
-        // if (source.substring(i, i + 1) === '\n') { // add '\n' and \n\n , /\r\n|\r|\n/g
-        //   // console.log('FOUND LINEBREAKS: ' + i)
-        //   lineBreaks.push(i)
-        // }
         // If you want to search case insensitive use
         // if (source.substring(i, i + find.length).toLowerCase() == find) {
         if (source.substring(i, i + find.length) === find) {
           startString.push(i)
         }
       }
-      // console.log('ignores found: ' + ignore + ' in ' + find)
-      // console.log('ignoreBlock found: ' + ignoreBlock + ' in ' + find)
-      // console.log('linebreaks found: ' + lineBreaks + ' in ' + find)
-      // console.log('startStrings: ' + startString + ' in ' + find)
-
-      // for (let j = 0; j < ignore.length; j++) {
-      //   console.log('All the ignores ' + ignore[j])
-      //   let found = lineBreaks.find(function (element) {
-      //     return element > ignore[j]
-      //   })
-      //   console.log(found)
-      // }
 
       for (let i = 0; i < startString.length; i++) {
         let searchIndex = startString[i] + source.substring(startString[i]).indexOf(endChar)
@@ -189,20 +166,7 @@ export default {
       }
       // console.log('Result Output: ' + result)
       return result
-    },
-    // findToIgnore (value) {
-    //   return function (element, index, array) {
-    //     return (element >= value)
-    //     // return (element <= value && element >= secondValue)
-    //   }
-    // },
-    // // filter between start and stop of block.
-    // findToIgnoreBlock (value) {
-    //   return function (element, index, array) {
-    //     // element must be between arrayvalue even and odd
-    //     return (element % 2 === 0)
-    //   }
-    // }
+    }
   }
 }
 </script>
