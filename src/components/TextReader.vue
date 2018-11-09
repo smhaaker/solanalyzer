@@ -72,10 +72,10 @@ export default {
     return {
       files: null,
       text: [],
-      contractName: null,
-      functionList: [],
+      // contractName: null,
+      // functionList: [],
       filesLoaded: null,
-      contractNameList: [],
+      // contractNameList: [],
       contractContent: [],
       testList: [{
         id: 1,
