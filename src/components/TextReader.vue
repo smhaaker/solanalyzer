@@ -127,18 +127,22 @@ export default {
     },
     analyze () {
       let vm = this
-      // console.log(vm.text[0].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, '').replace(/\/\*\*[^*]+\*\//g, ''))
+      // console.log(vm.text[0].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, '').replace(/\/\*\*[^*]+\*\//g, 'replaced'))
+      // console.log(vm.text[0].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, 'replace1').replace(/\/\*[^*]+\*\//g, 'replace2').replace(/\/\*\*[^*]+\*\//g, 'replaced3'))
+      // console.log(vm.text[0].content.replace(/\/\*{2}[^*][\s\S]*?\*\//g, 'asterisks'))
       // regex replace commands, saving until tests are done.
       // console.log(vm.text[0].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, ''))
       // console.log(vm.text[0].content.replace(/\/\*[^*]+\*\//g, '')) // backslash asterisk
 
-      // console.log(vm.text[0].content.replace(/\/\*/g, 'asterisk')) // backslash asterisk
+      // console.log(vm.text[0].content.replace(/\/\*\*[^*]+\*\//g, 'asterisk')) // forwardsslash asterisk
+
+      // console.log(vm.text[0].content.replace(/\/\*/g, 'asterisk')) // forwardsslash asterisk
       // console.log(vm.text[0].content.replace(/\*\//g, 'asterisk')) // asterisk forwardslash
 
       // console.log(vm.text[0].content.replace(/\/\//g, 'Comments'))
       vm.contractContent.splice(0) // Emptys contractContent object
       for (let i = 0; i < vm.files.length; i++) {
-        let commentsStripped = vm.text[i].content.replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, '').replace(/\/\*\*[^*]+\*\//g, '')
+        let commentsStripped = vm.text[i].content.replace(/\/\*{2}[^*][\s\S]*?\*\//g, 'asterisks').replace(/\/\/.*?(?:\r\n|\r|\n)/g, '').replace(/\/\*[^*]+\*\//g, '').replace(/\/\*\*[^*]+\*\//g, '')
         // If multiple contracts found in same file increase contract counter
         // Same with libraries
         let foundContracts = this.findElements(commentsStripped, 'contract ', '{')
